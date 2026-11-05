@@ -1,0 +1,123 @@
+name: Laravel review checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  functional:
+    name: Functional and accessibility checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: 'true'
+      PHP_BINARY: php
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          extensions: ctype, curl, dom, fileinfo, intl, mbstring, xml, xmlwriter, zip
+          coverage: none
+          tools: composer:2.11.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Composer validation and locked installation
+        run: |
+          composer validate --no-interaction
+          composer install --no-interaction --prefer-dist --no-progress
+          composer check-platform-reqs
+      - name: Local environment for isolated review
+        run: |
+          cp .env.example .env
+          php artisan key:generate --no-interaction
+          mkdir -p verification
+      - name: Content and Blade validation
+        run: composer check
+      - name: Laravel Pint
+        run: composer lint
+      - name: PHPUnit
+        run: composer test -- --log-junit verification/phpunit.xml
+      - run: npm ci
+      - name: TypeScript and JavaScript
+        run: |
+          npm run check
+          npm run lint
+      - name: Contrast and Bootstrap build
+        run: |
+          npm run test:contrast
+          npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Playwright, axe-core and rendered contrast
+        run: npm test
+      - name: Navigation under /documentacion/
+        run: npm run test:base
+      - name: Preserve functional evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: functional-evidence
+          path: |
+            verification/
+            test-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+  audits:
+    name: Dependency audits (known Laravel advisories)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: '8.3'
+          extensions: curl, mbstring, xml
+          coverage: none
+          tools: composer:2.11.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+      - name: Composer audit with original exit status
+        run: |
+          mkdir -p verification
+          set +e
+          composer audit --locked --format=json > verification/composer-audit.json
+          result=$?
+          printf '%s\n' "$result" > verification/composer-audit.exit-code.txt
+          cat verification/composer-audit.json
+          exit "$result"
+      - name: npm audit with original exit status
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p verification
+          set +e
+          npm audit --package-lock-only --json > verification/npm-audit.json
+          result=$?
+          printf '%s\n' "$result" > verification/npm-audit.exit-code.txt
+          cat verification/npm-audit.json
+          exit "$result"
+      - name: Preserve audit results even on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dependency-audits
+          path: |
+            verification/composer-audit.*
+            verification/npm-audit.*
+          if-no-files-found: error
+          retention-days: 14

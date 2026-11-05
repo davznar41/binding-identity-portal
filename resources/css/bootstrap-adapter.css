@@ -1,0 +1,12 @@
+/* Adaptación de Bootstrap independiente de los tokens y de la semántica documental. */
+:root {
+  --bs-body-font-family: var(--font-sans);
+  --bs-body-color: var(--color-text);
+  --bs-body-bg: var(--color-bg);
+  --bs-link-color: var(--color-link);
+  --bs-link-hover-color: var(--color-accent-hover);
+}
+body { line-height: 1.6; }
+h2, h3 { font-weight: 700; }
+/* Reboot elimina el borde nativo; los controles desplegables definen su propio borde. */
+button.mobile-toggle, button.group-toggle { border: 1px solid var(--color-strong-border); }

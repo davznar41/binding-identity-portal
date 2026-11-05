@@ -1,0 +1,13 @@
+* text=auto
+*.php text eol=lf
+*.blade.php text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.webp binary
+*.woff2 binary
+# Evita normalizar los artículos y recursos corporativos para conservar sus bytes.
+resources/content/docs/** -text
+public/assets/** -text

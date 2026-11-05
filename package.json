@@ -1,0 +1,27 @@
+{
+  "name": "binding-identity-docs-laravel",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "build": "node scripts/build-assets.mjs",
+    "serve": "node scripts/serve.mjs",
+    "check": "tsc --noEmit",
+    "lint": "node scripts/check-javascript.mjs",
+    "test": "playwright test",
+    "test:contrast": "node scripts/contrast.mjs",
+    "test:base": "node scripts/check-base.mjs"
+  },
+  "dependencies": {
+    "bootstrap": "~5.3.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.5",
+    "typescript": "6.0.3"
+  }
+}

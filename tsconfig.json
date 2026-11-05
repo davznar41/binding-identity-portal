@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES2023", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"], "types": ["node"],
+    "strict": true, "noEmit": true, "resolveJsonModule": true,
+    "allowJs": true, "checkJs": true, "skipLibCheck": true
+  },
+  "include": ["tests/Browser/**/*.ts", "playwright.config.ts", "resources/js/**/*.js"],
+  "exclude": ["node_modules", "vendor", "public/build", "verification", "test-results"]
+}

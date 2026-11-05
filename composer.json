@@ -1,0 +1,69 @@
+{
+    "name": "binding-software/identity-docs",
+    "type": "project",
+    "description": "Portal documental de Binding Identity en Laravel y Blade",
+    "require": {
+        "php": "~8.3.0",
+        "laravel/framework": "11.57.1",
+        "league/commonmark": "^2.7",
+        "symfony/yaml": "^7.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.22",
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "test": "@php vendor/bin/phpunit",
+        "lint": "@php vendor/bin/pint --test",
+        "check": [
+            "@php artisan docs:check",
+            "@php artisan view:cache"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "audit": {
+            "block-insecure": true,
+            "ignore": {
+                "PKSA-b41t-wbzk-9q51": {
+                    "apply": "block",
+                    "reason": "Permite instalar Laravel 11.57.1 exclusivamente para desarrollo local y pruebas CI aisladas. El aviso permanece visible en composer audit. El despliegue en producción requiere revisión y remediación."
+                },
+                "PKSA-d5tc-s1qs-h781": {
+                    "apply": "block",
+                    "reason": "Permite instalar Laravel 11.57.1 exclusivamente para desarrollo local y pruebas CI aisladas. El aviso permanece visible en composer audit. El despliegue en producción requiere revisión y remediación."
+                },
+                "PKSA-m5cs-t1y6-qpcs": {
+                    "apply": "block",
+                    "reason": "Permite instalar Laravel 11.57.1 exclusivamente para desarrollo local y pruebas CI aisladas. El aviso permanece visible en composer audit. El despliegue en producción requiere revisión y remediación."
+                },
+                "PKSA-3r5d-mb8f-1qw9": {
+                    "apply": "block",
+                    "reason": "Permite instalar Laravel 11.57.1 exclusivamente para desarrollo local y pruebas CI aisladas. El aviso permanece visible en composer audit. El despliegue en producción requiere revisión y remediación."
+                },
+                "PKSA-mdq4-51ck-6kdq": {
+                    "apply": "block",
+                    "reason": "Permite instalar Laravel 11.57.1 exclusivamente para desarrollo local y pruebas CI aisladas. El aviso permanece visible en composer audit. El despliegue en producción requiere revisión y remediación."
+                }
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
